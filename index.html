@@ -2,20 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Stopwatch - Polished UI</title>
+  <title>Stopwatch - Clean UI</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
       margin: 50px 0;
-      color: #E0E0E0; /* default text color for Notion dark background */
+      color: #FEFFC4; /* default text color */
     }
 
     #time {
       font-size: 4em;
       font-weight: bold;
-      color: #00FFFF; /* cyan for high contrast */
-      text-shadow: 0 0 8px #00FFFF, 0 0 16px #00FFFF;
+      color: #FEFFC4; /* main time color */
       margin-bottom: 40px;
     }
 
@@ -28,19 +27,28 @@
       cursor: pointer;
       font-weight: bold;
       transition: all 0.2s ease-in-out;
-      box-shadow: 0 4px 10px rgba(0, 255, 255, 0.3);
-      background: linear-gradient(135deg, #00FFFF, #0099FF);
-      color: #191919; /* text matches Notion background contrast */
+      color: #191919; /* text contrast for dark Notion bg */
+    }
+
+    #start {
+      background-color: #799EFF;
+    }
+
+    #stop {
+      background-color: #FFDE63;
+    }
+
+    #reset {
+      background-color: #FFBC4C;
     }
 
     button:hover {
-      filter: brightness(1.2);
-      box-shadow: 0 6px 14px rgba(0, 255, 255, 0.5);
+      filter: brightness(1.1);
     }
 
     h1 {
       font-size: 2em;
-      color: #FFFFFF;
+      color: #FEFFC4;
       margin-bottom: 20px;
     }
   </style>
@@ -48,9 +56,9 @@
 <body>
   <h1>Stopwatch</h1>
   <div id="time">00:00:00</div>
-  <button onclick="start()">Start</button>
-  <button onclick="stop()">Stop</button>
-  <button onclick="reset()">Reset</button>
+  <button id="start" onclick="start()">Start</button>
+  <button id="stop" onclick="stop()">Stop</button>
+  <button id="reset" onclick="reset()">Reset</button>
 
   <script>
     let startTime = null;
@@ -110,6 +118,18 @@
       clearInterval(timerInterval);
       timerInterval = null;
       saveToStorage();
+      updateDisplay();
+    }
+
+    function saveToStorage() {
+      const total = elapsed + (startTime ? (Date.now() - startTime) : 0);
+      localStorage.setItem(`stopwatchTime-${embedId}`, total);
+    }
+
+    loadFromStorage();
+  </script>
+</body>
+</html>      saveToStorage();
       updateDisplay();
     }
 
