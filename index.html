@@ -2,21 +2,46 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Stopwatch with Unique Embed IDs</title>
+  <title>Stopwatch - Polished UI</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       text-align: center;
-      margin-top: 50px;
+      margin: 50px 0;
+      color: #E0E0E0; /* default text color for Notion dark background */
     }
+
     #time {
-      font-size: 3em;
-      margin: 20px 0;
+      font-size: 4em;
+      font-weight: bold;
+      color: #00FFFF; /* cyan for high contrast */
+      text-shadow: 0 0 8px #00FFFF, 0 0 16px #00FFFF;
+      margin-bottom: 40px;
     }
+
     button {
       font-size: 1.2em;
-      margin: 5px;
-      padding: 10px 20px;
+      margin: 10px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 4px 10px rgba(0, 255, 255, 0.3);
+      background: linear-gradient(135deg, #00FFFF, #0099FF);
+      color: #191919; /* text matches Notion background contrast */
+    }
+
+    button:hover {
+      filter: brightness(1.2);
+      box-shadow: 0 6px 14px rgba(0, 255, 255, 0.5);
+    }
+
+    h1 {
+      font-size: 2em;
+      color: #FFFFFF;
+      margin-bottom: 20px;
     }
   </style>
 </head>
@@ -32,7 +57,7 @@
     let elapsed = 0;
     let timerInterval = null;
 
-    // Get embed ID from URL query parameter (default if none)
+    // Get embed ID from URL query parameter
     const embedId = new URLSearchParams(window.location.search).get("id") || "default";
 
     // Load time from localStorage
@@ -44,7 +69,7 @@
       updateDisplay();
     }
 
-    // Update stopwatch display
+    // Update display
     function updateDisplay() {
       const total = elapsed + (startTime ? (Date.now() - startTime) : 0);
       const seconds = Math.floor(total / 1000) % 60;
@@ -88,13 +113,11 @@
       updateDisplay();
     }
 
-    // Save time to localStorage using the embed ID
     function saveToStorage() {
       const total = elapsed + (startTime ? (Date.now() - startTime) : 0);
       localStorage.setItem(`stopwatchTime-${embedId}`, total);
     }
 
-    // Initialize stopwatch
     loadFromStorage();
   </script>
 </body>
