@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Stopwatch with Unique Embed ID</title>
+  <title>Stopwatch with Unique Embed IDs</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,12 +32,8 @@
     let elapsed = 0;
     let timerInterval = null;
 
-    // Generate a unique ID for this embed
-    let embedId = localStorage.getItem("stopwatchEmbedId");
-    if (!embedId) {
-      embedId = 'embed-' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem("stopwatchEmbedId", embedId);
-    }
+    // Get embed ID from URL query parameter (default if none)
+    const embedId = new URLSearchParams(window.location.search).get("id") || "default";
 
     // Load time from localStorage
     function loadFromStorage() {
@@ -92,13 +88,13 @@
       updateDisplay();
     }
 
-    // Save time to localStorage with embed ID
+    // Save time to localStorage using the embed ID
     function saveToStorage() {
       const total = elapsed + (startTime ? (Date.now() - startTime) : 0);
       localStorage.setItem(`stopwatchTime-${embedId}`, total);
     }
 
-    // Initialize
+    // Initialize stopwatch
     loadFromStorage();
   </script>
 </body>
