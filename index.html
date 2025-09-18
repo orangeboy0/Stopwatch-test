@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Stopwatch with LocalStorage</title>
+  <title>Stopwatch with Unique Embed ID</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -32,9 +32,16 @@
     let elapsed = 0;
     let timerInterval = null;
 
+    // Generate a unique ID for this embed
+    let embedId = localStorage.getItem("stopwatchEmbedId");
+    if (!embedId) {
+      embedId = 'embed-' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem("stopwatchEmbedId", embedId);
+    }
+
     // Load time from localStorage
     function loadFromStorage() {
-      const saved = parseInt(localStorage.getItem("stopwatchTime"));
+      const saved = parseInt(localStorage.getItem(`stopwatchTime-${embedId}`));
       if (!isNaN(saved)) {
         elapsed = saved;
       }
@@ -61,7 +68,6 @@
       if (!startTime) {
         startTime = Date.now();
         timerInterval = setInterval(tick, 1000);
-        // Save time to localStorage every 5s
         setInterval(saveToStorage, 5000);
       }
     }
@@ -86,13 +92,13 @@
       updateDisplay();
     }
 
-    // Save time to localStorage
+    // Save time to localStorage with embed ID
     function saveToStorage() {
       const total = elapsed + (startTime ? (Date.now() - startTime) : 0);
-      localStorage.setItem("stopwatchTime", total);
+      localStorage.setItem(`stopwatchTime-${embedId}`, total);
     }
 
-    // Load time on page load
+    // Initialize
     loadFromStorage();
   </script>
 </body>
