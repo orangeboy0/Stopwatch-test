@@ -129,16 +129,4 @@
     loadFromStorage();
   </script>
 </body>
-</html>      saveToStorage();
-      updateDisplay();
-    }
-
-    function saveToStorage() {
-      const total = elapsed + (startTime ? (Date.now() - startTime) : 0);
-      localStorage.setItem(`stopwatchTime-${embedId}`, total);
-    }
-
-    loadFromStorage();
-  </script>
-</body>
 </html>
