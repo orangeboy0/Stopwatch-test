@@ -15,7 +15,6 @@
       font-size: 3em;
       margin-bottom: 20px;
       color: #799EFF;
-      cursor: pointer;
     }
     button {
       font-size: 1.2em;
@@ -37,14 +36,14 @@
   <button id="resetBtn">Reset</button>
 
   <script>
-    const MAX_TIME = 3 * 60 * 60 * 1000; // 3 hours
+    const MAX_TIME = 3 * 60 * 60 * 1000; // 3 hours in ms
     const urlParams = new URLSearchParams(window.location.search);
     const stopwatchId = urlParams.get("id") || "default";
 
     const { createClient } = supabase;
     const supabaseClient = createClient(
-      "https://atqirggcezkmajfpvkhg.supabase.co", 
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0cWlyZ2djZXprbWFqZnB2a2hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNjcxNDgsImV4cCI6MjA3Mzg0MzE0OH0.KZJnvVkR7cfv9ln41Rk86yrfd1ZvN6mcv6ulrb7MXc8"
+      "https://atqirggcezkmajfpvkhg.supabase.co",
+      "YOUR_ANON_KEY_HERE"
     );
 
     let elapsed = 0;
@@ -71,10 +70,7 @@
     function updateDisplay() {
       let currentElapsed = elapsed;
       if (startTime) currentElapsed += Date.now() - startTime;
-      if (currentElapsed > MAX_TIME) {
-        currentElapsed = MAX_TIME;
-        stop();
-      }
+      if (currentElapsed > MAX_TIME) currentElapsed = MAX_TIME;
       timeDisplay.textContent = formatTime(currentElapsed);
     }
 
@@ -90,7 +86,7 @@
         elapsed += Date.now() - startTime;
         startTime = null;
         clearInterval(timerInterval);
-        saveElapsed(); // auto-save on stop
+        timerInterval = null;
       }
     }
 
@@ -98,47 +94,42 @@
       elapsed = 0;
       startTime = null;
       clearInterval(timerInterval);
+      timerInterval = null;
       updateDisplay();
-      saveElapsed();
     }
 
+    // Save elapsed time to Supabase every 5 seconds
     async function saveElapsed() {
       let currentElapsed = elapsed;
       if (startTime) currentElapsed += Date.now() - startTime;
       if (currentElapsed > MAX_TIME) currentElapsed = MAX_TIME;
 
-      await supabaseClient
-        .from("Stopwatches")
+      const { data, error } = await supabaseClient
+        .from("stopwatches")
         .upsert({ id: stopwatchId, elapsed: currentElapsed });
+
+      if (error) console.error("Save error:", error);
     }
 
+    // Load elapsed time on page load
     async function loadElapsed() {
-      let { data } = await supabaseClient
-        .from("Stopwatches")
+      const { data, error } = await supabaseClient
+        .from("stopwatches")
         .select("elapsed")
         .eq("id", stopwatchId)
         .single();
 
-      elapsed = data?.elapsed || 0;
+      if (error && error.code !== "PGRST116") console.error("Load error:", error);
+      if (data && data.elapsed !== undefined) elapsed = data.elapsed;
       updateDisplay();
     }
 
-    // Allow manual time edit
-    timeDisplay.addEventListener("click", () => {
-      let newTime = prompt("Enter new time in seconds:", Math.floor(elapsed / 1000));
-      if (newTime !== null) {
-        elapsed = Math.min(MAX_TIME, Math.max(0, parseInt(newTime) * 1000));
-        updateDisplay();
-        saveElapsed();
-      }
-    });
-
-    // Button listeners
+    // Event listeners
     startBtn.addEventListener("click", start);
     stopBtn.addEventListener("click", stop);
     resetBtn.addEventListener("click", reset);
 
-    // Auto-save every 5s
+    // Auto-save every 5 seconds
     setInterval(saveElapsed, 5000);
 
     // Load initial value
