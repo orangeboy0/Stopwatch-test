@@ -117,7 +117,7 @@
 
     async function loadElapsed() {
       let { data, error } = await supabaseClient
-        .from("stopwatches")
+        .from("Stopwatches")
         .select("elapsed")
         .eq("id", stopwatchId)
         .single();
