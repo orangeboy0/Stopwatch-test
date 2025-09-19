@@ -111,7 +111,7 @@
       if (currentElapsed > MAX_TIME) currentElapsed = MAX_TIME;
 
       await supabaseClient
-        .from("stopwatches")
+        .from("Stoptwatches")
         .upsert({ id: stopwatchId, elapsed: currentElapsed });
     }
 
