@@ -166,7 +166,7 @@
   <script>
     const MAX_TIME = 10 * 60 * 60 * 1000;
     const urlParams = new URLSearchParams(window.location.search);
-    const USE_TEST_ID = true;
+    const USE_TEST_ID = false;
     const TEST_ID = "test22";
     const stopwatchId = USE_TEST_ID ? TEST_ID : (urlParams.get("id") || "default");
 
